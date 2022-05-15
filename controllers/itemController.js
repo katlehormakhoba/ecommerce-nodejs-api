@@ -11,6 +11,18 @@ exports.getAllItems = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getItem = catchAsync(async (req, res, next) => {
+
+  const item = await Item.findOne({
+    where: {id : req.params.id}
+})
+  
+  res.status(200).json({
+    status: "success",
+    item,
+  });
+});
+
 exports.createItem = catchAsync(async (req, res, next) => {
   const item = await Item.create(req.body);
   res.status(200).json({

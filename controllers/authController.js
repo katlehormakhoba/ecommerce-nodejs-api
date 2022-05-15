@@ -12,7 +12,7 @@ const signToken = (user) => {
       {
         name: user.name,
         id: user.id,
-        // userType: user.userType,
+        userType: user.userType,
         email: user.email,
         photo: user.photo,
       },

@@ -2,6 +2,7 @@ const Cart = require("../models/cartModel");
 const catchAsync  = require('../utils/catchAsync')
 const User = require('../models/userModel')
 const Iterm = require('../models/itemModel')
+const Wish = require("../models/wishModel")
 
 
 exports.setUserId = (req, res, next) => {
@@ -11,9 +12,9 @@ exports.setUserId = (req, res, next) => {
     next()
 }
 
-exports.createCart = catchAsync(async(req,res,next)=> {
+exports.createWish = catchAsync(async(req,res,next)=> {
 
-    const cart =  await Cart.create(req.body);
+    const cart =  await Wish.create(req.body);
     
     res.status(200).json({
         status: "success",
@@ -23,7 +24,7 @@ exports.createCart = catchAsync(async(req,res,next)=> {
 })
 //ADMIN
 
-exports.getAllCarts = async(req,res,next)=> {
+exports.getAllWishes = async(req,res,next)=> {
 
     const carts = await Cart.findAll({
         where: { userId: req.user.id },
@@ -39,13 +40,13 @@ exports.getAllCarts = async(req,res,next)=> {
 
     res.status(200).json({
         status: "success",
-        message: "Hello from get all Blogs route 😜",
+        message: "Hello from get all wish route 😜",
         results: carts.length,
         carts
     })
 }
 
-exports.getCart = async(req, res, next) =>{
+exports.getWish = async(req, res, next) =>{
     
     const cart = await Cart.findOne({
         where: {id : req.params.id}
@@ -59,7 +60,7 @@ exports.getCart = async(req, res, next) =>{
     })
 }
 
-exports.updateCart = async(req, res, next) =>{
+exports.updateWish = async(req, res, next) =>{
     const {body} = req;
     
     const cart = await Cart.update(body,
@@ -77,7 +78,7 @@ exports.updateCart = async(req, res, next) =>{
 }
 
 
-exports.deleteCart = async(req, res, next) =>{
+exports.deleteWish = async(req, res, next) =>{
 
     
     const cart = await Cart.destroy(

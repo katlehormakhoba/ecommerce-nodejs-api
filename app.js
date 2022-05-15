@@ -13,6 +13,7 @@ const app = express();
 const userRoutes = require('./routes/userRoutes');
 const itemRoutes = require('./routes/itemRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const wishRoutes = require('./routes/wishRoutes');
 
 //3 APP.USE MIDDLEWARE
 
@@ -27,6 +28,7 @@ app.options('*', cors());
 app.use('/api/v1/users',userRoutes);
 app.use('/api/v1/items',itemRoutes);
 app.use('/api/v1/carts',cartRoutes);
+app.use('/api/v1/wishes',cartRoutes);
 
 app.use(globalErrHandler)
 //4 SERVER
