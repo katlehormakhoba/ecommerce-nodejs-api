@@ -28,7 +28,7 @@ app.options('*', cors());
 app.use('/api/v1/users',userRoutes);
 app.use('/api/v1/items',itemRoutes);
 app.use('/api/v1/carts',cartRoutes);
-app.use('/api/v1/wishes',cartRoutes);
+app.use('/api/v1/wishes',wishRoutes);
 
 app.use(globalErrHandler)
 //4 SERVER

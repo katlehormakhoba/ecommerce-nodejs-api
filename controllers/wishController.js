@@ -14,19 +14,19 @@ exports.setUserId = (req, res, next) => {
 
 exports.createWish = catchAsync(async(req,res,next)=> {
 
-    const cart =  await Wish.create(req.body);
+    const wish =  await Wish.create(req.body);
     
     res.status(200).json({
         status: "success",
         message: "Added to cart",
-        cart
+        wish
     })
 })
 //ADMIN
 
 exports.getAllWishes = async(req,res,next)=> {
 
-    const carts = await Cart.findAll({
+    const wishes = await Wish.findAll({
         where: { userId: req.user.id },
         include: [
 
@@ -40,40 +40,40 @@ exports.getAllWishes = async(req,res,next)=> {
 
     res.status(200).json({
         status: "success",
-        message: "Hello from get all wish route 😜",
-        results: carts.length,
-        carts
+        message: "Hello from get all Wish route 😜",
+        results: wishes.length,
+        wishes
     })
 }
 
 exports.getWish = async(req, res, next) =>{
     
-    const cart = await Cart.findOne({
+    const wish = await Wish.findOne({
         where: {id : req.params.id}
     })
 
-    if(!cart) return next(new Error('Document does not exist'));
+    if(!wish) return next(new Error('Document does not exist'));
 
     res.status(200).json({
         status: "success",
-        cart
+        wish
     })
 }
 
 exports.updateWish = async(req, res, next) =>{
     const {body} = req;
     
-    const cart = await Cart.update(body,
+    const wish = await Wish.update(body,
         {
         where: {id : req.params.id}
     })
 
-    if(!cart[0]) return next(new Error('Document does not exist'));
+    if(!wish[0]) return next(new Error('Document does not exist'));
 
     res.status(200).json({
         status: "success",
-        message: "Cart updated",
-        cart
+        message: "wish updated",
+        wish
     })
 }
 
@@ -81,16 +81,40 @@ exports.updateWish = async(req, res, next) =>{
 exports.deleteWish = async(req, res, next) =>{
 
     
-    const cart = await Cart.destroy(
+   
+    const wish = await Wish.destroy(
         {
         where: {id : req.params.id}
     })
 
-    console.log(cart)
-    if(!cart) return next(new Error('Document does not exist'))
+    console.log(wish)
+    if(!wish) return next(new Error('Document does not exist'))
+
+
     res.status(200).json({
         status: "success",
-        message: "Cart deleted",
+        message: "wish deleted",
+        wish
+    })
+}
+
+exports.moveToCart = async(req, res, next) =>{
+
+   
+    const wish = await Wish.destroy(
+        {
+        where: {id : req.body.id}
+    })
+    console.log(wish)
+    if(!wish) return next(new Error('Document does not exist'))
+
+    req.body.itemId = req.body.item.id
+    const cart =  await Cart.create(req.body);
+    
+    
+    res.status(200).json({
+        status: "success",
+        message: "Added to cart",
         cart
     })
 }

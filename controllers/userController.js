@@ -10,3 +10,17 @@ exports.updateUser = catchAsync( async(req,res,next)=>{
 
     
 })
+
+exports.getMe = catchAsync(async(req,res,next)=> {
+
+    const me =  await User.findOne({
+        where: { id: req.user.id },
+        attributes: { exclude: ["updatedAt", "createdAt", "password"] }
+    });
+    
+    res.status(200).json({
+        status: "success",
+        message: "My data",
+        me
+    })
+})
