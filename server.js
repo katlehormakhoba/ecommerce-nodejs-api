@@ -6,7 +6,7 @@ const sequelize = require('./config/db')
 
 
 sequelize.sync()
-// sequelize.sync({alter:true})
+sequelize.sync({alter:true})
 
 
 

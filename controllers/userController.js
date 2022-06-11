@@ -24,3 +24,4 @@ exports.getMe = catchAsync(async(req,res,next)=> {
         me
     })
 })
+

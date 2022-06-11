@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize =  require("../config/db") 
+const User = require('../models/userModel')
 
 
 const Item = sequelize.define('item',{
@@ -12,7 +13,6 @@ const Item = sequelize.define('item',{
     title:{
         type: Sequelize.STRING,
         allowNull: false,
-        unique:true
         // validate:{
         //     isAlpha: {args: true, msg: "Title contains invalid characters" }
         // }
@@ -40,17 +40,11 @@ const Item = sequelize.define('item',{
     updatedAt: Sequelize.DATE,
      
 
-})
+},{indexes: [{unique: true, name: 'title', fields: ['title']}]})
 
 
 
-
+User.hasOne(Item, {onDelete: 'CASCADE',foreignKey: 'vendorId'});
+Item.belongsTo(User ,{onDelete: 'CASCADE',foreignKey: 'vendorId'});
 
 module.exports = Item;
-
-
-
-
-
-
-
