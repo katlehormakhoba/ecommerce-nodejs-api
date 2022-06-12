@@ -55,8 +55,8 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await bcrypt.compare(password, user.password)))
     return next(new Error("Incorrect email or password"));
 
-  if (user.verified == false)
-    return next(new Error("Please verify your email address"));
+  if (user.isActive == false)
+    return next(new Error("Account deactivated!!"));
 
   const token = signToken(user);
 

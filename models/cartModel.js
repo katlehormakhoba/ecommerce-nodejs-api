@@ -14,6 +14,7 @@ const Cart = sequelize.define('cart',{
         allowNull: false,
         defaultValue: 1,
     },
+    
 
    
     
@@ -30,8 +31,8 @@ Cart.belongsTo(User);
 Item.hasOne(Cart, {onDelete: 'CASCADE',foreignKey: 'itemId'});
 Cart.belongsTo(Item);
 
-User.hasOne(Cart, {onDelete: 'CASCADE',foreignKey: 'vendorId'});
-Cart.belongsTo(User ,{onDelete: 'CASCADE',foreignKey: 'vendorId'});
+// User.hasOne(Cart, {onDelete: 'CASCADE',foreignKey: 'vendorId'});
+// Cart.belongsTo(User ,{onDelete: 'CASCADE',foreignKey: 'vendorId'});
 
 module.exports = Cart;
 

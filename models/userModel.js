@@ -58,6 +58,11 @@ const User = sequelize.define('user',{
         len: { args:[6,10], msg:"Password should be between 6 to 10 characters"}
        }
     },
+    isActive:{
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+        allowNull: false,
+    },
     // confirmPassword: {
     //     type: Sequelize.STRING,
     //     allowNull:false,
@@ -81,10 +86,19 @@ const User = sequelize.define('user',{
 
 
   
-User.beforeCreate(async (user, options) => {
+// User.beforeCreate(async (user, options) => {
+  
+//     user.password = await bcrypt.hash(user.password, 12);
+//     console.log("im in the beforeCreate hook User", options, user)
+//   });
+
+    
+User.afterValidate(async (user, options) => {
+
+
   
     user.password = await bcrypt.hash(user.password, 12);
-    // console.log("im in the beforeCreate hook User", options, user)
+    console.log("im in the beforeCreate hook User",  user)
   });
 
 // User.sync({alter:true})
