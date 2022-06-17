@@ -9,6 +9,10 @@ const Address = sequelize.define('address',{
         primaryKey: true,
         autoIncrement: true,
     },
+    street: {
+        type: Sequelize.STRING , 
+        allowNull: false,  
+    },
     town: {
         type: Sequelize.STRING , 
         allowNull: false,  
@@ -24,6 +28,10 @@ const Address = sequelize.define('address',{
     zipCode: {
         type: Sequelize.STRING , 
         allowNull: false,  
+    },
+    isActive:{
+        type: Sequelize.BOOLEAN,
+        defaultValue: true        
     },
 
 
@@ -48,8 +56,6 @@ const Address = sequelize.define('address',{
 User.hasOne(Address, {onDelete: 'CASCADE',foreignKey: 'userId'});
 Address.belongsTo(User);
 
-Item.hasOne(Address, {onDelete: 'CASCADE',foreignKey: 'itemId'});
-Address.belongsTo(Item);
 
 
 

@@ -12,6 +12,18 @@ exports.getAllItems = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getAllVendorItems = catchAsync(async (req, res, next) => {
+
+  const items = await Item.findAll({
+    where: {vendorId : req.user.id}
+  });
+  
+  res.status(200).json({
+    status: "success",
+    items,
+  });
+});
+
 exports.getItem = catchAsync(async (req, res, next) => {
 
   const item = await Item.findOne({

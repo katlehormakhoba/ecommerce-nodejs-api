@@ -15,6 +15,8 @@ const itemRoutes = require('./routes/itemRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const wishRoutes = require('./routes/wishRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const addressRoutes = require('./routes/addressRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 //3 APP.USE MIDDLEWARE
 
@@ -31,6 +33,10 @@ app.use('/api/v1/items',itemRoutes);
 app.use('/api/v1/carts',cartRoutes);
 app.use('/api/v1/wishes',wishRoutes);
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/addresses', addressRoutes);
+app.use('/api/v1/orders', orderRoutes);
+
+
 
 app.use(globalErrHandler)
 //4 SERVER

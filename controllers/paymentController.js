@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const Order = require('../models/orderModel');
 const Address = require('../models/addressModel');
 const Cart = require('../models/cartModel');
+const sequelize = require('../config/db')
 
 exports.setProductUserIds = (req, res, next) => {
 
@@ -25,37 +26,31 @@ exports.setProductUserIds = (req, res, next) => {
     next();
 }
 
-exports.createPayment = catchAsync(async(req, res, next) => {
 
+exports.getAddress =  catchAsync(async( req, res, next) => {
+    let data = {
+        street: "Soshanguve - K",
+        town: "Soshanguve",
+        zipCode: "0152",
+        province: "Gauteng",
+        city: "Pretoria",
+        userId: req.user.id
+    }
+    let address;
 
+    if(req.body.deliveryType != 1){
+         address = await Address.findOne({
+            where: {userId : req.user.id, isActive : true}
+        })
 
-
-    let obj = {};
-    let loop = 0;
-    let ids = [];
-    let orderID = `${req.user.id}-${Date.now()}`;
-    const items = await Cart.findAll({
-        where: {
-            userId: req.user.id
-        }
-    }); //TO GET MY PRODUCTS IDS FROM CART
-
-    //SETTING MY PRODUCTS IDS FROM CART
-   console.log("hello:: ", items)
-    // //SETTING ORDER ID
-    // obj.orderID = orderID;
-    // req.body.orderID = orderID;
-    // //SETTING PRODUCT IDS
-    // obj.product = ids;
-    // req.body.product = ids;
-    // //SETTING USER IDS
-    // obj.user = req.user.id;    
+    }
+    else{
+        address = await Address.create(data)
+    }
     
 
-    // await Address.create(req.body);
-    // await Order.create(obj);
-
-    next();
+    req.address = address;
+    next()
 })
 
 
@@ -80,15 +75,15 @@ exports.getCheckoutSession = catchAsync(async( req, res, next) => {
     //2) Creating checkout session
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-        success_url: `https://cottonfest.herokuapp.com/order`,
-        cancel_url: `https://cottonfest.herokuapp.com/cart`,
+        success_url: `http://localhost:4200/success`,
+        cancel_url: `http://localhost:4200/home/cart`,
         customer_email: req.user.email,
-        client_reference_id: req.params.id,
+        client_reference_id: req.params.amount,
         line_items: [{
             name: 'Kasi_Supplier ',
             description: 'Your One Stop Supplier...',
-            images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZnuED3kdYDZakSHic0FNgSlmGFPWved9DLw&usqp=CAU'],
-            amount: (Math.round(req.params.amount* 0.065)) * 100 ,
+            images: ['https://www.pngall.com/wp-content/uploads/2016/06/Ecommerce-PNG-Pic.png'],
+            amount: (req.params.amount * 100),
             currency: 'zar',
             quantity: 1
         }]
@@ -103,8 +98,19 @@ exports.getCheckoutSession = catchAsync(async( req, res, next) => {
     })
 
     
+// console.log('ITEMS: ',items)
+let loop = 0;
+let obj = []
+items.forEach( _ => {
+    console.log('ITEMS: ',items[loop].dataValues)
+    // amount += cart[loop].product.price;
+    items[loop].dataValues.orderNum = req.body.orderNum
+    items[loop].dataValues.addressId = req.address.id
+    obj.push(items[loop].dataValues)
+    loop++;
+});
 
-    await Order.bulkCreate(items);
+    await Order.bulkCreate(obj);
 
     await Cart.destroy({
         where: {
@@ -112,44 +118,38 @@ exports.getCheckoutSession = catchAsync(async( req, res, next) => {
         }
     });
 
+    
 
 
     //3) response
     res.status(200).json({
         status: 'success',
          session,
-         items
+        //  items
     })
 })
 
 
-exports.getAllCheckoutSession = catchAsync(async( req, res, next) => {
+exports.sessionSuccessfull = catchAsync(async( req, res, next) => {
 
-    
-    
+    await Cart.destroy({
+        where: {
+            userId : req.user.id
+        }
+    });
+})
 
-    //2) Creating checkout session
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        success_url: `https://cottonfest.herokuapp.com/order`,
-        cancel_url: `https://cottonfest.herokuapp.com/cart`,
-        customer_email: req.user.email,
-        line_items: [{
-            name: 'Kasi_Supplier ',
-            description: 'Your One Stop Supplier...',
-            images: [`${req.protocol}://${req.get('host')}/img/purchase/cart.jpg`],
-            amount: (Math.round(req.amount * 0.065)) * 100 ,
-            currency: 'usd',
-            quantity: 1
-        }]
+
+exports.getPaymentStates = async(req, res, next) =>{
+    
+    const cart = await  sequelize.query({
+        where: {id : req.params.id}
     })
 
-    await Cart.deleteMany({user: req.user._id});
-
-    // 3) response
+    if(!cart) return next(new Error('Document does not exist'));
 
     res.status(200).json({
-        status: 'success',
-        session
+        status: "success",
+        cart
     })
-})
+}

@@ -2,6 +2,7 @@ const Order = require("../models/orderModel");
 const catchAsync  = require('../utils/catchAsync')
 const User = require('../models/userModel')
 const Item = require('../models/itemModel')
+const sequelize = require('../config/db')
 
 
 exports.setUserId = (req, res, next) => {
@@ -25,8 +26,48 @@ exports.createOrder = catchAsync(async(req,res,next)=> { // Come here when order
 
 exports.getAllOrders = async(req,res,next)=> {
 
+
     const orders = await Order.findAll({
         where: { userId: req.user.id },
+        group: "orderNum",
+        include: [
+
+            {
+              model: Item,
+              attributes: { exclude: ["updatedAt", "createdAt"] },
+              
+            }
+          ],
+        });
+        
+        const items = await Order.findAll({
+            where: { userId: req.user.id },
+            include: [
+
+                {
+                  model: Item,
+                  attributes: { exclude: ["updatedAt", "createdAt"] },
+                  
+                }
+              ]
+        })
+
+
+
+    res.status(200).json({
+        status: "success",
+        message: "Hello from get all orders route 😜",
+        results: orders.length,
+        orders,
+        items
+    })
+}
+
+
+exports.getOrderDetails = async(req,res,next)=> {
+
+    const orders = await Order.findAll({
+        where: { orderNum: req.params.id },
         include: [
 
             {

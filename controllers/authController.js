@@ -91,3 +91,16 @@ exports.checkUser = (req, res, next) => {
   
     next();
   };
+
+  exports.restrictTo = (...roles) => {
+
+    return (req, res, next) => {
+        const { userType } = req.user;
+
+        if (roles.includes(userType)) {
+            return next(new Error('Sorry you dont have permission to perform this action'))
+        }
+
+        next();
+    }
+}
