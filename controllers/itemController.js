@@ -12,6 +12,7 @@ exports.getAllItems = catchAsync(async (req, res, next) => {
   });
 });
 
+
 exports.getAllVendorItems = catchAsync(async (req, res, next) => {
 
   const items = await Item.findAll({
@@ -37,6 +38,7 @@ exports.getItem = catchAsync(async (req, res, next) => {
 });
 
 exports.createItem = catchAsync(async (req, res, next) => {
+  req.body.vendorId = req.user.id;
   const item = await Item.create(req.body);
   res.status(200).json({
     status: "success",

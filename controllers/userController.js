@@ -37,6 +37,67 @@ exports.getMe = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.deleteVendor = async(req, res, next) =>{
+
+    
+  const vendor = await User.destroy(
+      {
+      where: {id : req.params.id}
+  })
+
+  console.log(vendor)
+  if(!vendor) return next(new Error('Document does not exist'))
+  res.status(200).json({
+      status: "success",
+      message: "vendor deleted",
+      vendor
+  })
+}
+
+exports.getVendorRequest = catchAsync(async (req, res, next) => {
+  
+  const vendors = await User.findAll({
+    where: { userType: 'vendor', isActive: false },
+    attributes: { exclude: ["updatedAt", "createdAt", "password"] },
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: "My data",
+    vendors
+  });
+});
+
+exports.getAllVendor = catchAsync(async (req, res, next) => {
+  
+  const vendors = await User.findAll({
+    where: { userType: 'vendor', isActive: true},
+    attributes: { exclude: ["updatedAt", "createdAt", "password"] },
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: "My data",
+    vendors
+  });
+});
+
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  
+  const users = await User.findAll({
+    where: { userType: 'user'},
+    attributes: { exclude: ["updatedAt", "createdAt", "password"] },
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: "My data",
+    users
+  });
+
+});
+
+
 exports.setVender = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     where: { id: req.user.id },
@@ -50,6 +111,26 @@ exports.setVender = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+exports.acceptVendorShip = catchAsync(async(req, res, next) =>{
+
+  const user = await User.findOne({
+    where: {id : req.params.id}
+})
+
+  if(!user) return next(new Error('Document does not exist'));
+
+  user.isActive = true;
+  await user.save();
+
+  res.status(200).json({
+      status: "success",
+    message: "Vendor Accepted",
+    user
+  })
+})
+
+
 exports.requestVendorStatus = catchAsync(async (req, res, next) => {
   password = req.body.password;
   conPassword = req.body.conPassword;
@@ -65,3 +146,37 @@ exports.requestVendorStatus = catchAsync(async (req, res, next) => {
     me,
   });
 });
+
+
+exports.deactivateAccount = catchAsync(async(req,res,next)=> { // Come here when order is successfull
+
+  const user =  await User.update({isActive: false}, {
+    where: { id: req.user.id },
+  });
+  
+  res.status(200).json({
+      status: "success",
+      message: "Added to users",
+      user
+  })
+})
+
+exports.deleteUserAccount = async(req, res, next) =>{
+
+    
+   
+  const user = await User.destroy(
+      {
+      where: {id : req.params.id}
+  })
+
+  console.log(user)
+  if(!user) return next(new Error('Document does not exist'))
+
+
+  res.status(200).json({
+      status: "success",
+      message: "user deleted",
+      user
+  })
+}
